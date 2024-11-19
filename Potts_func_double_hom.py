@@ -82,7 +82,7 @@ def next_neighborsNM(ix,iy,a,Lx,Ly,l):
         if iy==0:
             out = [[ix,iy,l-2],[ix,iy,l-1]]
         else:
-            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1]]
+            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1]] #first two NNs are coupling to blues on iy-1 sites. last two NNs are coupling to blues on iy sites. -(-1)**iy gives the K shape of the couplings
     elif a==l-1:
         if iy==Ly-1:
             out = [[ix,iy,0],[ix,iy,1]]
@@ -111,9 +111,59 @@ def next_neighborsNM(ix,iy,a,Lx,Ly,l):
         elif a==l-3:
             out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1],[ix,iy,a-1],[ix,iy,l-2],[ix,iy,l-1]]
         elif 1<a<l-3:
-            out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1],[ix,iy,a-1],[(ix-(-1)**(iy+a+1))%Lx,iy,a+1],[ix,iy,a+1]]
+            out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1],[ix,iy,a-1],[(ix-(-1)**(iy+a))%Lx,iy,a+1],[ix,iy,a+1]]
             
     return out
+
+def NN_rb(ix,iy,a,Lx,Ly,l):
+    """Gives a tuple with the positions of the next neighbors from red to blue"""
+    if a==0:
+        if iy==0:
+            out = [[ix,iy,l-2],[ix,iy,l-1]]
+        else:
+            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1]] #first two NNs are coupling to blues on iy-1 sites. last two NNs are coupling to blues on iy sites. -(-1)**iy gives the K shape of the couplings
+    return out
+
+def NN_gb(ix,iy,a,Lx,Ly,l):
+    """Gives a tuple with the positions of the next neighbors from red to blue"""
+    if a==0:
+        if iy==0:
+            out = [[ix,iy,l-2],[ix,iy,l-1]]
+        else:
+            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1]] #first two NNs are coupling to blues on iy-1 sites. last two NNs are coupling to blues on iy sites. -(-1)**iy gives the K shape of the couplings
+    return out
+
+def NN_br(ix,iy,a,Lx,Ly,l):
+    """Gives a tuple with the positions of the next neighbors from red to blue"""
+    if a==l-1:
+        if iy==Ly-1:
+            out = [[ix,iy,0],[ix,iy,1]]
+        elif iy==0:
+            out = [[ix,iy+1,0],[ix,iy+1,1]]
+        else:
+            out = [[ix,iy,0],[ix,iy,1],[ix,iy+1,0],[ix,iy+1,1]]
+    elif a==l-2:
+        if iy==0:
+            out = [[(ix-(-1)**iy)%Lx,iy+1,0],[(ix-(-1)**iy)%Lx,iy+1,1]]
+        elif iy==Ly-1:
+            out = [[ix,iy,0],[ix,iy,1]]
+        else:
+            out = [[ix,iy,0],[ix,iy,1],[(ix-(-1)**iy)%Lx,iy+1,0],[(ix-(-1)**iy)%Lx,iy+1,1]]
+    return out
+
+def U_local(l,Jp1,Jp2,J0):
+    q = np.shape(Jp1)[0]
+    U = np.zeros((l,l,q,q))
+    lv = l-3
+    for j in range(l-2,l):
+        U[0,j,:,:] = Jp1
+        U[j,0,:,:] = Jp1
+        U[lv,j,:,:] = Jp2
+        U[j,lv,:,:] = Jp2
+    for j in range(1,l-3):
+        U[j,j+1,:,:] = J0
+        U[j+1,j,:,:] = J0
+    return U
 
 def cycles(q):
     """Creates a random operator acting on the space {1,...q} of order 2.
