@@ -17,6 +17,7 @@ def Coupling_matr(Q,p,d,tol=1e-16):
     return max(p,tol)+np.identity(q)*(1-p)+(1-p)*AA/d
         
 def gxA1(n,m,Q):
+    """Permutation associated to the calculation of the trace of the n-th power of the partial transpose of the density matrix, replicated m times on a space of Q replicas"""
     out = []
     #Q=n*m+1
     for x in range(m):
@@ -27,6 +28,7 @@ def gxA1(n,m,Q):
     return np.uint8(permutation_index(np.array(out),range(Q)))
 
 def gxA2(n,m,Q):
+    """Permutation associated to the calculation of the trace of the n-th power of the density matrix, replicated m times on a space of Q replicas"""
     out = []
     #Q=n*m+1
     for x in range(m):
@@ -37,16 +39,18 @@ def gxA2(n,m,Q):
     return np.uint8(permutation_index(np.array(out),range(Q)))
 
 def boundaryS(Lx,lA1,g1,g2):
+    """Boundary condition associated to the calculation of the Renyi-3 negativity for a state A~Lx on a partition A1~lA1"""
     out = np.zeros(Lx,dtype=np.uint8)
     out[:lA1] = g1 #partition where the partial transpose^3 is calculated
     out[lA1:] = g2 #partition where the density matrix^3 is calculated
     return out
 
 def boundaryD(Lx,lA1,lA2,g1,g2):
+    """Boundary condition associated to the calculation of the Renyi-3 negativity for a (mixed) state A~Lx on a partition A1~lA1, after tracing out B~Lx"""
     out = np.zeros((Lx,2),dtype=np.uint8)
     out[:lA1,0] = g1
     out[lA1:,0] = g2
-    #the second row represent the site on B (the ancilla chain) which we trace out
+    #the second row represent the sites on B (the ancilla chain) which we trace out and are thus associated to the identity permutation, i.e. to 0
     return out
 
 def next_neighbors(ix,iy,Lx,Ly):
@@ -61,6 +65,18 @@ def next_neighbors(ix,iy,Lx,Ly):
 
 
 def next_neighborsNM(ix,iy,a,Lx,Ly,l):
+    """Gives a tuple with the positions of the next neighbors, considering also the internal degrees of freedom of each site
+    - ix, iy are the positions of the site on the lattice, with size Lx x Ly
+    - lis the number of the interal d.o.f.s of each site, labeled by a
+    - a = 0 corresponds to the red d.o.f. (system circuit)
+    - a = 1,2,3,...,l-3 correspond to the green (ancilla circuit) unitaries. the number of these d.o.f.s is determined by the value of t2
+    - a = l-2,l-1 corresponds to the blue d.o.f.s, i.e. the unitaries coupling the two circuits    
+    Red is coupled to blue on the same site and on iy-1 sites
+    First green couples to blues on iy-1 and greens on iy and ix+-1
+    Middle greens couple to greens on iy and ix+-1
+    Last green couples to to blues on iy and greens on iy and ix+-1
+    Blues couple to red and last green on iy and to red and first green on iy+1
+    """
     lv = l-3 #number of green (ancilla) spins on each site
     if a==0:
         if iy==0:
