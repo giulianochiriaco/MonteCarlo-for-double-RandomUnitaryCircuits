@@ -256,7 +256,10 @@ def EnergyBulkHalf(spin0,coupling,l0):
 
 def EnergyBC(spin,boundary,coupling):
     """Boundary energy of a Potts spin lattice, given the boundary"""
-    return 2*Energy1D(spin[-1,:],boundary,coupling)
+    #out = -np.log(coupling[0,spin[-1,:,-1],boundary[:,0]])-np.log(coupling[0,spin[-1,:,-2],boundary[:,0]])
+    #out = out -np.log(coupling[0,spin[-1,:,-1],boundary[:,1]])-np.log(coupling[0,spin[-1,:,-2],boundary[:,1]])
+    out = -np.log(coupling[0,spin[-1,:,-2:],boundary])
+    return 2*np.sum(out)#Energy1D(spin[-1,:],boundary,coupling)
 
 def EnergyTOT(spin,boundary,coupling):
     """Total energy of a Potts spin lattice, given the boundary at the top (end time) and at the bottom (start time)."""
@@ -283,8 +286,9 @@ def Wolff_step(spin,Lx,Ly,l,r,coupling,boundary=None):
             p_add = max(0,1-exp(-DeltaE)) #get probability to add it
             if [jy,jx,b] not in cluster and np.random.uniform(0.,1.)<p_add: #if successfull, and the site is not in cluster, add it      
                 new_elements.append([jy,jx,b])
-        if my==Ly-1 and boundary.any()!=None: #if boundary is present and the site is next to it, add the energy difference to E_b
-            DeltaEboundary += 2*(Energy(rsm,boundary[mx],coupling)-Energy(sm,boundary[mx],coupling))#because each site is connected to two boundary sites
+        if my==Ly-1 and (a==l-1 or a==l-2) and boundary.any()!=None: #if boundary is present and the site is next to it, add the energy difference to E_b
+            DeltaEboundary += 2*(Energy(rsm,boundary[mx,0],coupling[0])-Energy(sm,boundary[mx,0],coupling[0]))#because each blue site is connected to two red boundary sites
+            DeltaEboundary += 2*(Energy(rsm,boundary[mx,1],coupling[0])-Energy(sm,boundary[mx,1],coupling[0]))#because each blue site is connected to two blue boundary sites
         cluster += new_elements #add new elements to cluster
         spin_c[my,mx,a] = rsm #transform the spin on the original site
     if DeltaEboundary>log_rflip: #if energy cost for boundary is too high, do not flip the cluster
@@ -293,14 +297,14 @@ def Wolff_step(spin,Lx,Ly,l,r,coupling,boundary=None):
         spin_out = spin_c
     return spin_out #return spin configuration
 
-def Montecarlo(Lx,Ly,spin,q,coupling,Nstep,boundary=None,Ntherm=1000,prnt=0,Ninterval=20,config=0):
+def Montecarlo(Lx,Ly,l,spin,q,coupling,Nstep,boundary=None,Ntherm=1000,prnt=0,Ninterval=20,config=0):
     EBu_out = []
     ECo_out = []
     counter = 0
     
     for i in range(Ntherm):
         r = cycles(q)
-        spin = Wolff_step(spin,Lx,Ly,r,coupling,boundary=boundary)
+        spin = Wolff_step(spin,Lx,Ly,l,r,coupling,boundary=boundary)
         if i%Ninterval==0:
             if prnt!=0:
                 print(spin)
@@ -310,7 +314,7 @@ def Montecarlo(Lx,Ly,spin,q,coupling,Nstep,boundary=None,Ntherm=1000,prnt=0,Nint
     counter += 1
     for i in range(Nstep):
         r = cycles(q)
-        spin = Wolff_step(spin,Lx,Ly,r,coupling,boundary=boundary)
+        spin = Wolff_step(spin,Lx,Ly,l,r,coupling,boundary=boundary)
         if i%Ninterval==0:
             if prnt!=0:
                 print(spin)
