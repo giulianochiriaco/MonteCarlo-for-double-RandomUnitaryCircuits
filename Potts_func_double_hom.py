@@ -65,7 +65,8 @@ def next_neighbors(ix,iy,Lx,Ly):
 
 
 def next_neighborsNM(ix,iy,a,Lx,Ly,l):
-    """Gives a tuple with the positions of the next neighbors, considering also the internal degrees of freedom of each site
+    """Gives a tuple with the positions of the next neighbors, considering also the internal degrees of freedom of each site (labeled by a)
+    and the type of link: 1 for the red to blue, 2 for the green to blue and 0 for the rest.
     - ix, iy are the positions of the site on the lattice, with size Lx x Ly
     - lis the number of the interal d.o.f.s of each site, labeled by a
     - a = 0 corresponds to the red d.o.f. (system circuit)
@@ -80,38 +81,38 @@ def next_neighborsNM(ix,iy,a,Lx,Ly,l):
     lv = l-3 #number of green (ancilla) spins on each site
     if a==0:
         if iy==0:
-            out = [[ix,iy,l-2],[ix,iy,l-1]]
+            out = [[ix,iy,l-2,1],[ix,iy,l-1,1]]
         else:
-            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1]] #first two NNs are coupling to blues on iy-1 sites. last two NNs are coupling to blues on iy sites. -(-1)**iy gives the K shape of the couplings
+            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2,1],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1,1]] #first two NNs are coupling to blues on iy-1 sites. last two NNs are coupling to blues on iy sites. -(-1)**iy gives the K shape of the couplings
     elif a==l-1:
         if iy==Ly-1:
-            out = [[ix,iy,0],[ix,iy,1]]
+            out = [[ix,iy,0,0],[ix,iy,1,0]]
         elif iy==0:
-            out = [[ix,iy+1,0],[ix,iy+1,1]]
+            out = [[ix,iy+1,0,0],[ix,iy+1,1,0]]
         else:
-            out = [[ix,iy,0],[ix,iy,1],[ix,iy+1,0],[ix,iy+1,1]]
+            out = [[ix,iy,0,0],[ix,iy,1],[ix,iy+1,0],[ix,iy+1,1,0]]
     elif a==l-2:
         if iy==0:
-            out = [[(ix-(-1)**iy)%Lx,iy+1,0],[(ix-(-1)**iy)%Lx,iy+1,1]]
+            out = [[(ix-(-1)**iy)%Lx,iy+1,0,0],[(ix-(-1)**iy)%Lx,iy+1,1,0]]
         elif iy==Ly-1:
-            out = [[ix,iy,0],[ix,iy,1]]
+            out = [[ix,iy,0],[ix,iy,1,0]]
         else:
-            out = [[ix,iy,0],[ix,iy,1],[(ix-(-1)**iy)%Lx,iy+1,0],[(ix-(-1)**iy)%Lx,iy+1,1]]
+            out = [[ix,iy,0,0],[ix,iy,1,0],[(ix-(-1)**iy)%Lx,iy+1,0,0],[(ix-(-1)**iy)%Lx,iy+1,1,0]]
     elif lv==1 and a==1:
         if iy==0:
-            out = [[ix,iy,l-2],[ix,iy,l-1]]
+            out = [[ix,iy,l-2,2],[ix,iy,l-1,2]]
         else:
-            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1]]
+            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2,2],[ix,iy-1,l-1,2],[ix,iy,l-2,2],[ix,iy,l-1,2]]
     elif lv>1:
         if a==1:
             if iy==0:
-                out = [[(ix-(-1)**(iy+a))%Lx,iy,a+1],[ix,iy,a+1]]
+                out = [[(ix-(-1)**(iy+a))%Lx,iy,a+1,0],[ix,iy,a+1,0]]
             else:
-                out = [[(ix-(-1)**(iy))%Lx,iy-1,l-2],[ix,iy-1,l-1],[(ix-(-1)**(iy+a))%Lx,iy,a+1],[ix,iy,a+1]]
+                out = [[(ix-(-1)**(iy))%Lx,iy-1,l-2,0],[ix,iy-1,l-1,0],[(ix-(-1)**(iy+a))%Lx,iy,a+1,0],[ix,iy,a+1,0]]
         elif a==l-3:
-            out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1],[ix,iy,a-1],[ix,iy,l-2],[ix,iy,l-1]]
+            out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1,2],[ix,iy,a-1,2],[ix,iy,l-2,2],[ix,iy,l-1,2]]
         elif 1<a<l-3:
-            out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1],[ix,iy,a-1],[(ix-(-1)**(iy+a))%Lx,iy,a+1],[ix,iy,a+1]]
+            out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1,0],[ix,iy,a-1,0],[(ix-(-1)**(iy+a))%Lx,iy,a+1,0],[ix,iy,a+1,0]]
             
     return out
 
@@ -165,6 +166,19 @@ def U_local(l,Jp1,Jp2,J0):
         U[j+1,j,:,:] = J0
     return U
 
+def U_vec(Q,p1,p2,d):
+    """Returns a vector with the values of the couplings for a given Q.
+    First element is the J0 coupling which connects the b->r,b->g,g->g sites
+    Second element is the J1 coupling, for the r->b links
+    Third element is the J2 coupling, for the g->b links"""
+    J0 = Coupling_matr(Q,0,d)
+    J1 = Coupling_matr(Q,p1,d)
+    J2 = Coupling_matr(Q,p2,d)
+    return np.array([J0,J1,J2])
+
+# s1 U s1
+# jia,k abkl jib,l -> jia
+
 def cycles(q):
     """Creates a random operator acting on the space {1,...q} of order 2.
     I.e. it is a permutation from Sq made of only transpositions.
@@ -215,7 +229,7 @@ def EnArr(spin,coupling,boundary=None):
     EnA[1:-1,:] += -np.log(coupling[spin[1:-1,:],spin_x[2:,:]]) - np.log(coupling[spin[1:-1,:],spin_x[:-2,:]])
     EnA[-1,:] += -np.log(coupling[spin[-1,:],spin[-2,:]]) - np.log(coupling[spin[-1,:],spin_x[-2,:]])
     EnA[0,:] += -np.log(coupling[spin[0,:],spin[1,:]]) - np.log(coupling[spin[0,:],spin_x[1,:]])
-    if boundary.any()!=None
+    if boundary.any()!=None:
         EnA[-1,:] += -np.log(coupling[spin[-1,:],boundary])
     return 0.5*EnA
 
@@ -250,31 +264,29 @@ def EnergyTOT(spin,boundary,coupling):
     return EnergyBulk(spin,coupling)+EnergyBC(spin,boundary,coupling)+EnBC0
 
 
-def Wolff_step(spin,Lx,Ly,r,coupling,boundary=None):
+def Wolff_step(spin,Lx,Ly,l,r,coupling,boundary=None):
     """One step in the Wolff algorithm."""
-    m = [np.random.randint(Ly),np.random.randint(Lx)] #choose random site on physical lattice
+    m = [np.random.randint(Ly),np.random.randint(Lx),np.random.randint(l)] #choose random site on physical lattice
     cluster = [] #stack=[] #initialize stack of sites in the cluster and add m to it
     cluster.append(m)
     spin_c = spin.copy() #create copy of lattice spin configuration to not mess with the original one
     log_rflip = -np.log(np.random.rand())#+0.000000000000001)
     DeltaEboundary = 0.0
     for elem in cluster: #loop over the length of the stack until it's empty
-        my,mx = elem #get coordinates of cluster element.
-        sm = spin[my,mx] #get the spin value on that site
+        my,mx,a = elem #get coordinates of cluster element.
+        sm = spin[my,mx,a] #get the spin value on that site
         rsm = r[sm]#rs(r,sm,Q) #get transformed spin
         new_elements = [] #list with the new sites to add to the cluster
-        for jx,jy in next_neighbors(mx,my,Lx,Ly): #visit next neighbors sites
+        for jx,jy,b,link in next_neighborsNM(mx,my,a,Lx,Ly,l): #visit next neighbors sites
         #Works for square lattice. However our lattice has coupling along the diagonals, so we may need to modify that
-            DeltaE = Energy(rsm,spin[jy,jx],coupling)-Energy(sm,spin[jy,jx],coupling) #calculate difference in energy
+            DeltaE = Energy(rsm,spin[jy,jx,b],coupling[link])-Energy(sm,spin[jy,jx,b],coupling[link]) #calculate difference in energy
             p_add = max(0,1-exp(-DeltaE)) #get probability to add it
-            if [jy,jx] not in cluster and np.random.uniform(0.,1.)<p_add: #if successfull, and the site is not in cluster, add it      
-                new_elements.append([jy,jx])
+            if [jy,jx,b] not in cluster and np.random.uniform(0.,1.)<p_add: #if successfull, and the site is not in cluster, add it      
+                new_elements.append([jy,jx,b])
         if my==Ly-1 and boundary.any()!=None: #if boundary is present and the site is next to it, add the energy difference to E_b
             DeltaEboundary += 2*(Energy(rsm,boundary[mx],coupling)-Energy(sm,boundary[mx],coupling))#because each site is connected to two boundary sites
-        if my==0:
-            DeltaEboundary += 2*(Energy(rsm,0,coupling)-Energy(sm,0,coupling))#the boundary at the start is the identity permutation
         cluster += new_elements #add new elements to cluster
-        spin_c[my,mx] = rsm #transform the spin on the original site
+        spin_c[my,mx,a] = rsm #transform the spin on the original site
     if DeltaEboundary>log_rflip: #if energy cost for boundary is too high, do not flip the cluster
         spin_out = spin
     else:  #otherwise flip it
