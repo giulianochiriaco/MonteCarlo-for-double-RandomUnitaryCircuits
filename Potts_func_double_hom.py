@@ -45,7 +45,7 @@ def boundaryS(Lx,lA1,g1,g2):
     out[lA1:] = g2 #partition where the density matrix^3 is calculated
     return out
 
-def boundaryD(Lx,lA1,lA2,g1,g2):
+def boundaryD(Lx,lA1,g1,g2):
     """Boundary condition associated to the calculation of the Renyi-3 negativity for a (mixed) state A~Lx on a partition A1~lA1, after tracing out B~Lx"""
     out = np.zeros((Lx,2),dtype=np.uint8)
     out[:lA1,0] = g1
