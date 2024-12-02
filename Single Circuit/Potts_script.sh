@@ -10,21 +10,18 @@
 #
 #SBATCH --mem-per-cpu=4000mb
 #
-#SBATCH --array=0,2,4,6,8,10,12,14,16,18,20,22,24
+#SBATCH --array=0-30:2
 #SBATCH --partition=regular1,regular2
 #SBATCH --time=11:59:00
 #SBATCH --output=./Output/Potts_Single.o%A-%a
 #SBATCH --error=./Errors/Potts_Single.e%A-%a
 #
 
-## YOUR CODE GOES HERE (load the modules and do the calculations)
-## Sample code:
-
 # Make sure it's the same module used at compile time
 module load python3
 
-# Calculate the parameter of the calculation based on the array index,
-# e.g. in this case as 5 times the array index
+# Calculate the parameter of the calculation based on the array index, which indicates lA, i.e. the size of the partition. It is an even number ranging from 0 to Lx (or to Lx/2)
+# p is the measurement probability, Lx the size in the x direction (i.e. size of the system), Ly the size in time, Nstep is the number of Wolff steps
 lA=$((${SLURM_ARRAY_TASK_ID}))
 p=0.05
 Lx=30
