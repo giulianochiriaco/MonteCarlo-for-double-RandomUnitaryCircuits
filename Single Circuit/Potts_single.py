@@ -11,7 +11,7 @@ Ly=int(Ly)
 lA=int(lA)
 p=float(p)
 Nstep=int(Nstep)
-folder='/home/gchiriac/DoubleRUC/Montecarlo/Single_circuit/Results/NoBC0'#L'+str(L)
+folder='/home/gchiriac/DoubleRUC/Montecarlo/Single_circuit/Results'#L'+str(L)
 
 n=3
 m=1
