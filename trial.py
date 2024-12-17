@@ -59,10 +59,10 @@ for i in range(100000):
     aac = slice1(UU,s1)
 print(time.time()-t0)"""
 
-"""t0=time.time()
+t0=time.time()
 for i in range(100000):
     aac = slice2(UU,s1)
-print(time.time()-t0)"""
+print(time.time()-t0)""""""
 
 s1= np.random.randint(0, 24, size=(20,10,6))
 s1 = np.random.randint(0, 24, size=(20,10,6, 2))
@@ -94,8 +94,10 @@ s1_b = s1[..., 1]  # Shape (Ly, Lx, l)
 
 a_indices, b_indices = np.indices((l, l))
 
+s1 (jia) U(abkl) s1(jib)
+abkl,jibl -> jia
 # Use advanced indexing to construct the output array
-Out = np.einsum('...ab, ...cd -> ...abcd', U, s1)# Alternatively, if you want to use np.einsum for some reason
+Out = np.einsum('ji, jia -> jiab', U, s1)# Alternatively, if you want to use np.einsum for some reason
 # Note: This might not be necessary, but can be used for similar operations
 # Out = np.einsum('...ab, ...cd -> ...abcd', U, s1)
 

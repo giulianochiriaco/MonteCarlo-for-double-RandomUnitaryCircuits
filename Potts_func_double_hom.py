@@ -83,21 +83,21 @@ def next_neighborsNM(ix,iy,a,Lx,Ly,l):
         if iy==0:
             out = [[ix,iy,l-2,1],[ix,iy,l-1,1]]
         else:
-            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2,1],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1,1]] #first two NNs are coupling to blues on iy-1 sites. last two NNs are coupling to blues on iy sites. -(-1)**iy gives the K shape of the couplings
+            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2,1],[ix,iy-1,l-1,1],[ix,iy,l-2,1],[ix,iy,l-1,1]] #first two NNs are coupling to blues on iy-1 sites. last two NNs are coupling to blues on iy sites. -(-1)**iy gives the K shape of the couplings
     elif a==l-1:
         if iy==Ly-1:
-            out = [[ix,iy,0,0],[ix,iy,1,0]]
+            out = [[ix,iy,0,1],[ix,iy,1,2]]
         elif iy==0:
-            out = [[ix,iy+1,0,0],[ix,iy+1,1,0]]
+            out = [[ix,iy+1,0,1],[ix,iy+1,1,2]]
         else:
-            out = [[ix,iy,0,0],[ix,iy,1],[ix,iy+1,0],[ix,iy+1,1,0]]
+            out = [[ix,iy,0,1],[ix,iy,1,2],[ix,iy+1,0,1],[ix,iy+1,1,2]]
     elif a==l-2:
         if iy==0:
-            out = [[(ix-(-1)**iy)%Lx,iy+1,0,0],[(ix-(-1)**iy)%Lx,iy+1,1,0]]
+            out = [[(ix-(-1)**iy)%Lx,iy+1,0,1],[(ix-(-1)**iy)%Lx,iy+1,1,2]]
         elif iy==Ly-1:
-            out = [[ix,iy,0],[ix,iy,1,0]]
+            out = [[ix,iy,0,1],[ix,iy,1,2]]
         else:
-            out = [[ix,iy,0,0],[ix,iy,1,0],[(ix-(-1)**iy)%Lx,iy+1,0,0],[(ix-(-1)**iy)%Lx,iy+1,1,0]]
+            out = [[ix,iy,0,1],[ix,iy,1,2],[(ix-(-1)**iy)%Lx,iy+1,0,1],[(ix-(-1)**iy)%Lx,iy+1,1,2]]
     elif lv==1 and a==1:
         if iy==0:
             out = [[ix,iy,l-2,2],[ix,iy,l-1,2]]
@@ -108,9 +108,9 @@ def next_neighborsNM(ix,iy,a,Lx,Ly,l):
             if iy==0:
                 out = [[(ix-(-1)**(iy+a))%Lx,iy,a+1,0],[ix,iy,a+1,0]]
             else:
-                out = [[(ix-(-1)**(iy))%Lx,iy-1,l-2,0],[ix,iy-1,l-1,0],[(ix-(-1)**(iy+a))%Lx,iy,a+1,0],[ix,iy,a+1,0]]
+                out = [[(ix-(-1)**(iy))%Lx,iy-1,l-2,2],[ix,iy-1,l-1,2],[(ix-(-1)**(iy+a))%Lx,iy,a+1,0],[ix,iy,a+1,0]]
         elif a==l-3:
-            out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1,2],[ix,iy,a-1,2],[ix,iy,l-2,2],[ix,iy,l-1,2]]
+            out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1,0],[ix,iy,a-1,0],[ix,iy,l-2,2],[ix,iy,l-1,2]]
         elif 1<a<l-3:
             out = [[(ix-(-1)**(iy+a))%Lx,iy,a-1,0],[ix,iy,a-1,0],[(ix-(-1)**(iy+a))%Lx,iy,a+1,0],[ix,iy,a+1,0]]
             
@@ -123,33 +123,6 @@ def NN_rb(ix,iy,a,Lx,Ly,l):
             out = [[ix,iy,l-2],[ix,iy,l-1]]
         else:
             out = [[(ix-(-1)**iy)%Lx,iy-1,l-2],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1]] #first two NNs are coupling to blues on iy-1 sites. last two NNs are coupling to blues on iy sites. -(-1)**iy gives the K shape of the couplings
-    return out
-
-def NN_gb(ix,iy,a,Lx,Ly,l):
-    """Gives a tuple with the positions of the next neighbors from red to blue"""
-    if a==0:
-        if iy==0:
-            out = [[ix,iy,l-2],[ix,iy,l-1]]
-        else:
-            out = [[(ix-(-1)**iy)%Lx,iy-1,l-2],[ix,iy-1,l-1],[ix,iy,l-2],[ix,iy,l-1]] #first two NNs are coupling to blues on iy-1 sites. last two NNs are coupling to blues on iy sites. -(-1)**iy gives the K shape of the couplings
-    return out
-
-def NN_br(ix,iy,a,Lx,Ly,l):
-    """Gives a tuple with the positions of the next neighbors from red to blue"""
-    if a==l-1:
-        if iy==Ly-1:
-            out = [[ix,iy,0],[ix,iy,1]]
-        elif iy==0:
-            out = [[ix,iy+1,0],[ix,iy+1,1]]
-        else:
-            out = [[ix,iy,0],[ix,iy,1],[ix,iy+1,0],[ix,iy+1,1]]
-    elif a==l-2:
-        if iy==0:
-            out = [[(ix-(-1)**iy)%Lx,iy+1,0],[(ix-(-1)**iy)%Lx,iy+1,1]]
-        elif iy==Ly-1:
-            out = [[ix,iy,0],[ix,iy,1]]
-        else:
-            out = [[ix,iy,0],[ix,iy,1],[(ix-(-1)**iy)%Lx,iy+1,0],[(ix-(-1)**iy)%Lx,iy+1,1]]
     return out
 
 def U_local(l,Jp1,Jp2,J0):
@@ -196,75 +169,33 @@ def Energy(spin1,spin2,coupling):
     weight = coupling[spin1,spin2]
     return np.float(-np.log(weight))
 
-def EnergyArray(spin,boundary,coupling):
-    Ly,Lx = np.shape(spin)
-    EnA = 0.5*np.array([[np.sum([Energy(spin[jy,jx],spin[ky,kx],coupling) for kx,ky in next_neighbors(jx,jy,Lx,Ly)]) for jx in range(Lx)] for jy in range(Ly)])
-    for i in range(Lx):
-        EnA[-1,i] += Energy(spin[-1,i],boundary[i],coupling)
-    return EnA
-
-def Energy1D(spin1,spin2,coupling):
-    """Energy of two 1D arrays of Potts spins given the coupling matrix."""
-    if len(np.shape(coupling))==2:
-        weight = coupling[spin1[:],spin2[:]]
-    else:
-        weight = np.array([coupling[i,spin1[i],spin2[i]] for i in range(len(spin1))])
-    return np.sum(-np.log(weight))
-
-def Energy2D(spin1,spin2,coupling):
-    """Energy of two 2D arrays of Potts spins given the coupling matrix."""
-    Ly,Lx = np.shape(spin1)
-    if len(np.shape(coupling))==2: 
-        weight = coupling[spin1[:,:],spin2[:,:]]
-    else:
-        weight = np.array([[coupling[i,j,spin1[i,j],spin2[i,j]] for j in range(Lx)] for i in range(Ly)])
-    return np.sum(-np.log(weight))
-
-def EnArr(spin,coupling,boundary=None):
-    spin_x = spin.copy()
-    spin_x[::2] = np.roll(spin_x[::2],shift=-1,axis=1)
-    spin_x[1::2] = np.roll(spin_x[1::2],shift=1,axis=1)
+def EnergyArray(spin,coupling,contour):
+    """Energy of a Potts spin array given the coupling matrix. Each site is the energy of that spin due to the interaction with the top next neighbors."""
+    Ly,Lx,l=np.shape(spin)
+    J0,J1,J2 = coupling
     EnA = np.zeros(np.shape(spin))
-    EnA[1:-1,:] += -np.log(coupling[spin[1:-1,:],spin[2:,:]]) - np.log(coupling[spin[1:-1,:],spin[:-2,:]])
-    EnA[1:-1,:] += -np.log(coupling[spin[1:-1,:],spin_x[2:,:]]) - np.log(coupling[spin[1:-1,:],spin_x[:-2,:]])
-    EnA[-1,:] += -np.log(coupling[spin[-1,:],spin[-2,:]]) - np.log(coupling[spin[-1,:],spin_x[-2,:]])
-    EnA[0,:] += -np.log(coupling[spin[0,:],spin[1,:]]) - np.log(coupling[spin[0,:],spin_x[1,:]])
-    if boundary.any()!=None:
-        EnA[-1,:] += -np.log(coupling[spin[-1,:],boundary])
-    return 0.5*EnA
-
-def EnergyBulk(spin,coupling):
-    """Bulk energy of a Potts spin lattice, given the coupling matrix and the configuration of next neighbors"""
-    En=0
-    spin_x = spin.copy()
-    spin_x[::2] = np.roll(spin_x[::2],shift=-1,axis=1)
-    spin_x[1::2] = np.roll(spin_x[1::2],shift=1,axis=1)
-    En += Energy2D(spin[:-1,:],spin[1:,:],coupling)
-    En += Energy2D(spin[:-1,:],spin_x[1:,:],coupling)
-    #En += Energy2D(spin[:-1:2,1:],spin[1::2,:-1],coupling)#distance between odd and even rows next neighbors
-    #En += Energy2D(spin[:-1:2,1:],spin[1::2,1:],coupling)#distance between odd and even rows next neighbors
-    #En += Energy1D(spin[:-1:2,0],spin[1::2,-1],coupling)
-    #En += Energy2D(spin[1:-1:2,:-1],spin[2::2,1:],coupling)#distance between odd and even rows next neighbors
-    #En += Energy2D(spin[1:-1:2,:-1],spin[2::2,:-1],coupling)#distance between odd and even rows next neighbors
-    #En += Energy1D(spin[1:-1:2,0],spin[2::2,-1],coupling)
-    return En#np.float128(En)
-
-def EnergyBulkHalf(spin0,coupling,l0):
-    """Bulk energy of a Potts spin lattice, given the coupling matrix and the configuration of next neighbors"""
-    spin = spin0[-l0:,:]
-    return EnergyBulk(spin,coupling)#np.float128(En)
-
-def EnergyBC(spin,boundary,coupling):
-    """Boundary energy of a Potts spin lattice, given the boundary"""
-    #out = -np.log(coupling[0,spin[-1,:,-1],boundary[:,0]])-np.log(coupling[0,spin[-1,:,-2],boundary[:,0]])
-    #out = out -np.log(coupling[0,spin[-1,:,-1],boundary[:,1]])-np.log(coupling[0,spin[-1,:,-2],boundary[:,1]])
-    out = -np.log(coupling[0,spin[-1,:,-2:],boundary])
-    return 2*np.sum(out)#Energy1D(spin[-1,:],boundary,coupling)
-
-def EnergyTOT(spin,boundary,coupling):
-    """Total energy of a Potts spin lattice, given the boundary at the top (end time) and at the bottom (start time)."""
-    EnBC0 = Energy1D(spin[0,:],np.zeros(np.shape(spin)[1],dtype=int),coupling) #energy of the boundary at the start. Initial condition is given by identity permutation
-    return EnergyBulk(spin,coupling)+EnergyBC(spin,boundary,coupling)+EnBC0
+    EnA[:,:,0] = - np.log(J1[spin[:,:,0],spin[:,:,l-2]]) - np.log(J1[spin[:,:,0],spin[:,:,l-1]])
+    EnA[:,:,l-3] = - np.log(J2[spin[:,:,0],spin[:,:,l-2]]) - np.log(J2[spin[:,:,0],spin[:,:,l-1]])
+    if l>4:
+        for a in range(1,l-3):
+            s1 = spin[:,:,a]
+            s2 = s1.copy()
+            s2[::2], s2[1::2] = np.roll(s1[::2], (-1)**a, axis=1), np.roll(s1[1::2], -(-1)**a, axis=1)
+            EnA[:,:,a] = - np.log(J0[s1,s2]) - np.log(J0[spin[:,:,a],spin[:,:,a+1]])
+    
+    s0, s1, s3 = spin[:,:,l-2], spin[:,:,0], spin[:,:,1]
+    s2 = s1.copy(); s2[::2], s2[1::2] = np.roll(s1[::2], -1, axis=1), np.roll(s1[1::2], 1, axis=1)
+    s2 = np.roll(s2,-1,axis=0); s2[-1,:]=contour[:,0]
+    s4 = s3.copy(); s4[::2], s4[1::2] = np.roll(s3[::2], -1, axis=1), np.roll(s3[1::2], 1, axis=1)
+    s4 = np.roll(s4,-1,axis=0); s2[-1,:]=contour[:,1]
+    EnA[:,:,l-2] = - np.log(J1[s0,s2]) - np.log(J2[s0,s4])
+    
+    s0, s1, s3 = spin[:,:,l-1], spin[:,:,0], spin[:,:,1]
+    s2 = s1.copy(); s2=np.roll(s2,-1,axis=0); s2[-1,:]=contour[:,0]
+    s4 = s3.copy(); s4=np.roll(s4,-1,axis=0); s4[-1,:]=contour[:,1]
+    EnA[:,:,l-1] = - np.log(J1[s0,s2]) - np.log(J2[s0,s4])
+    
+    return EnA
 
 
 def Wolff_step(spin,Lx,Ly,l,r,coupling,boundary=None):
@@ -298,8 +229,11 @@ def Wolff_step(spin,Lx,Ly,l,r,coupling,boundary=None):
     return spin_out #return spin configuration
 
 def Montecarlo(Lx,Ly,l,spin,q,coupling,Nstep,boundary=None,Ntherm=1000,prnt=0,Ninterval=20,config=0):
-    EBu_out = []
-    ECo_out = []
+    """Execution of one Monte Carlo run with Nstep Wolff steps and Ntherm thermalization steps. 
+    Returns the total energy and the boundary energy term every Ninterval steps.
+    It also returns the average spin array and spin array squared."""
+    ETOT_out = [] #total energy
+    ECo_out = [] #boundary energy term
     counter = 0
     
     for i in range(Ntherm):
@@ -318,53 +252,34 @@ def Montecarlo(Lx,Ly,l,spin,q,coupling,Nstep,boundary=None,Ntherm=1000,prnt=0,Ni
         if i%Ninterval==0:
             if prnt!=0:
                 print(spin)
-            EBu_out.append(EnergyBulk(spin,coupling))
-            ECo_out.append(EnergyBC(spin,boundary,coupling))
+            EnArray = EnergyArray(spin,coupling,boundary)
+            ETOT_out.append(np.sum(EnArray))
+            ECo_out.append(np.sum(EnArray[-1,:,-2:]))
             spin_av += spin.copy()
             spin2_av += (spin.copy())**2
             counter += 1
     if config==0:
-        return np.array(EBu_out),np.array(ECo_out),spin_av/counter,spin2_av/counter
+        return np.array(ETOT_out),np.array(ECo_out),spin_av/counter,spin2_av/counter
     else:
-        return np.array(EBu_out),np.array(ECo_out),spin_av/counter,spin2_av/counter,spin
+        return np.array(ETOT_out),np.array(ECo_out),spin_av/counter,spin2_av/counter,spin
 
 def MontecarloEn(Lx,Ly,spin,q,coupling,Nstep,boundary=None,Ntherm=1000,prnt=0,Ninterval=20):
+    """Execution of one Monte Carlo run with Nstep Wolff steps. Returns the average array energy and array energy squared."""
     counter = 0
 
     for i in range(Ntherm):
         r = cycles(q)
         spin = Wolff_step(spin,Lx,Ly,r,coupling,boundary=boundary)
 
-    En_av = EnergyArray(spin,boundary,coupling)
+    En_av = EnergyArray(spin,coupling,boundary)
     En2_av = (En_av.copy())**2
     counter += 1
     for i in range(Nstep):
         r = cycles(q)
         spin = Wolff_step(spin,Lx,Ly,r,coupling,boundary=boundary)
         if i%Ninterval==0:
-            Etmp = EnergyArray(spin,boundary,coupling)
+            Etmp = EnergyArray(spin,coupling,boundary)
             En_av += Etmp.copy()
             En2_av += (Etmp.copy())**2
             counter += 1
     return En_av/counter,En2_av/counter
-
-def MontecarloHalf(Lx,Ly,l0,spin,q,coupling,Nstep,boundary=None,Ntherm=1000,prnt=0,Ninterval=20,config=0):
-    EBu_out = []
-    ECo_out = []
-    EBh_out = []
-
-    for i in range(Ntherm):
-        r = cycles(q)
-        spin = Wolff_step(spin,Lx,Ly,r,coupling,boundary=boundary)
-
-    for i in range(Nstep):
-        r = cycles(q)
-        spin = Wolff_step(spin,Lx,Ly,r,coupling,boundary=boundary)
-        if i%Ninterval==0:
-            EBu_out.append(EnergyBulk(spin,coupling))
-            EBh_out.append(EnergyBulkHalf(spin,coupling,l0))
-            ECo_out.append(EnergyBC(spin,boundary,coupling))
-    if config==0:
-        return np.array(EBu_out),np.array(EBh_out),np.array(ECo_out)
-    else:
-        return np.array(EBu_out),np.array(EBh_out),np.array(ECo_out),spin
